@@ -1,32 +1,79 @@
-const answerA = document.getElementById('answer-A');
-const answerB = document.getElementById('answer-B');
-const correctAnswer = 'Đáp án A';
+const questions = [
+    { 
+        question: "Ngày hôm nay thế nào ngừi đẹp", 
+        answers: ["Cũng iu đời", "Hơi khó chịu", "Bình thường thoii", "Hỏi làm gì"], 
+        correct: -1 
+    },
+    { 
+        question: "Tí chị chơi tft với em hông", 
+        answers: ["Không", "Khồng", "Sao phải chơi", "Cóa"], 
+        correct: -1
+    },
+    { 
+        question: "Chuyện hôm qua chị còn giận em hông", 
+        answers: ["Hơi hơi", "Hơi đâu mà giận", "Rất giận", "Hết rùi"], 
+        correct: -1
+    },
+        { 
+            question: "Chị có muốn em vuốt lông cho không?", 
+            answers: ["Không", "Có", "Khồng", "Hông"], 
+            correct: 1
+        }
+    ];
+    
+    let currentQuestion = 0;
+    
+    const questionElement = document.getElementById("question");
+    const answersContainer = document.getElementById("answers");
+    
+    function loadQuestion() {
+        const q = questions[currentQuestion];
+        questionElement.innerText = q.question;
+        answersContainer.innerHTML = "";
+    
+        q.answers.forEach((answer, index) => {
+            const btn = document.createElement("button");
+            btn.innerText = answer;
+            btn.onclick = () => handleAnswer(index);
+            answersContainer.appendChild(btn);
+    
 
-// Xử lý sự kiện khi người chơi chọn đáp án
-answerA.addEventListener('click', checkAnswer);
-answerB.addEventListener('click', checkAnswer);
-
-function checkAnswer(event) {
-    const selectedAnswer = event.target.textContent;
-
-    if (selectedAnswer !== correctAnswer) {
-        moveWrongAnswer(event.target);  // Di chuyển nút khi sai
-    } else {
-        alert('Chúc mừng bạn đã chọn đúng!');
+            if (currentQuestion === questions.length - 1 && index !== q.correct) {
+                btn.classList.add("wrong");
+            }
+        });
     }
-}
-
-// Hàm di chuyển nút ngẫu nhiên quanh màn hình
-function moveWrongAnswer(button) {
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-
-    // Tạo vị trí ngẫu nhiên cho nút
-    const randomX = Math.floor(Math.random() * (screenWidth - button.offsetWidth));
-    const randomY = Math.floor(Math.random() * (screenHeight - button.offsetHeight));
-
-    // Cập nhật vị trí của nút
-    button.style.position = 'absolute';
-    button.style.left = `${randomX}px`;
-    button.style.top = `${randomY}px`;
-}
+    
+    function handleAnswer(index) {
+        if (currentQuestion < questions.length - 1) {
+            nextQuestion();
+        } else {
+            const correctIndex = questions[currentQuestion].correct;
+            if (index === correctIndex) {
+                document.body.innerHTML = "<h1>Hì thế để em vuốt lông cho chị nhé :>></h1>";
+            } else {
+                moveWrongAnswer();
+            }
+        }
+    }
+    
+    function nextQuestion() {
+        currentQuestion++;
+        loadQuestion();
+    }
+    
+    function moveWrongAnswer() {
+        const wrongButtons = document.querySelectorAll(".wrong");
+        wrongButtons.forEach(button => {
+            const maxX = answersContainer.clientWidth - button.clientWidth - 20;
+            const maxY = answersContainer.clientHeight - button.clientHeight - 20;
+    
+            button.style.position = "absolute"; 
+            button.style.top = Math.random() * maxY + "px";
+            button.style.left = Math.random() * maxX + "px";
+        });
+    }
+    
+    
+    loadQuestion();
+    
